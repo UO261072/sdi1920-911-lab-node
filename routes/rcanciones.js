@@ -8,6 +8,11 @@ module.exports = function(app) {
 
         res.send("ver canciones");
     });
+    app.post("/cancion",function(req,res){
+        res.send("Cancion agregada:"+req.body.nombre +"<br>"
+        +" genero:" +req.body.genero +"<br>"
+        +" precio: "+req.body.precio);
+    });
 
     app.get('/canciones/:id', function(req, res) {
         let respuesta = 'id: ' + req.params.id;
