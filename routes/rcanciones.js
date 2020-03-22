@@ -23,10 +23,15 @@ module.exports = function(app,swig,gestorBD) {
         /*res.send("Cancion agregada:"+req.body.nombre +"<br>"
         +" genero:" +req.body.genero +"<br>"
         +" precio: "+req.body.precio);*/
+        if ( req.session.usuario == null){
+            res.redirect("/tienda");
+            return;
+        }
         let cancion={
             nombre:req.body.nombre,
             genero:req.body.genero,
-            precion:req.body.precio
+            precion:req.body.precio,
+            autor: req.session.usuario
         }
         // Conectarse
         gestorBD.insertarCancion(cancion, function(id){
@@ -58,6 +63,10 @@ module.exports = function(app,swig,gestorBD) {
     });
 
     app.get('/canciones/agregar', function (req, res) {
+        if ( req.session.usuario == null){
+            res.redirect("/tienda");
+            return;
+        }
         let respuesta = swig.renderFile('views/bagregar.html', {
 
         });
