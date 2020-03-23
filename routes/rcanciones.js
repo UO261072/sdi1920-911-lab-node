@@ -180,7 +180,7 @@ module.exports = function(app,swig,gestorBD) {
     });
     app.post("/comentario/:id",function(req,res){
         if ( req.session.usuario == null){
-            res.redirect("/tienda");
+            res.send(respuesta);
             return;
         }
         let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
@@ -195,7 +195,6 @@ module.exports = function(app,swig,gestorBD) {
                     texto :req.body.texto,
                     cancion_id:canciones[0]._id
                 }
-                // Conectarse
                 gestorBD.insertarComentario(comentario, function(id){
                     if (id == null) {
                         res.send("Error al insertar comentario");
@@ -207,6 +206,22 @@ module.exports = function(app,swig,gestorBD) {
         });
 
 
+    });
+    app.get("/comentario/borrar/:id",function(req,res){
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+        gestorBD.obtenerComentarios(criterio,function(comentarios){
+            if(comentarios==null){
+                res.send(respuesta);
+            }else {
+                let comentarioAutor=comentarios[0].autor;
+                if ( req.session.usuario != comentarioAutor){
+                    res.send("Error autores diferentes");
+                    return;
+                }
+                gestorBD.eliminarComentario(criterio);
+                res.redirect("/tienda");
+            }
+        });
     });
 
 

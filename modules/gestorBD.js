@@ -125,5 +125,16 @@ module.exports = {
                 });
             }
         });
+    },
+    eliminarComentario:function(criterio,functionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('comentarios');
+                collection.remove(criterio)
+
+            }
+        });
     }
 };
