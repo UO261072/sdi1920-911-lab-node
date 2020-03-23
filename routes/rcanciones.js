@@ -79,11 +79,19 @@ module.exports = function(app,swig,gestorBD) {
             if ( canciones == null ){
                 res.send(respuesta);
             } else {
-                let respuesta = swig.renderFile('views/bcancion.html',
-                    {
-                        cancion : canciones[0]
-                    });
-                res.send(respuesta);
+                criterio = { "cancion_id" : gestorBD.mongo.ObjectID(req.params.id)  };
+                gestorBD.obtenerComentarios(criterio,function(comentarios){
+                    if(comentarios==null){
+                        res.send(respuesta);
+                    }else {
+                        let respuesta = swig.renderFile('views/bcancion.html',
+                            {
+                                cancion: canciones[0],
+                                comentarios:comentarios
+                            });
+                        res.send(respuesta);
+                    }
+                });
             }
         });
     });
@@ -170,6 +178,39 @@ module.exports = function(app,swig,gestorBD) {
             }
         });
     });
+    app.post("/comentario/:id",function(req,res){
+        if ( req.session.usuario == null){
+            res.redirect("/tienda");
+            return;
+        }
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+        console.log(req.body.criterio);
+        let cancion;
+        gestorBD.obtenerCanciones(criterio,function(canciones) {
+            if (canciones == null) {
+                res.send(respuesta);
+            } else {
+                let comentario={
+                    autor: req.session.usuario,
+                    texto :req.body.texto,
+                    cancion_id:canciones[0]._id
+                }
+                // Conectarse
+                gestorBD.insertarComentario(comentario, function(id){
+                    if (id == null) {
+                        res.send("Error al insertar comentario");
+                    } else {
+                        res.send("Agregada id: "+ id);
+                    }
+                });
+            }
+        });
+
+
+    });
+
+
+
     function paso1ModificarPortada(files, id, callback){
         if (files && files.portada != null) {
             let imagen =files.portada;
@@ -198,4 +239,5 @@ module.exports = function(app,swig,gestorBD) {
             callback(true); // FIN
         }
     };
+
 };

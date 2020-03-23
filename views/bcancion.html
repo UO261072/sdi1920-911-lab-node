@@ -16,3 +16,30 @@
         </div>
     </div>
 </div>
+<br><br>
+<h2>Comentarios</h2>
+{% for comentario in comentarios %}
+<br><br><br><br><br>
+<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
+    <div>
+        <div class="wrap">Autor: {{ comentario.autor }}</div>
+        <div class="small">Comentario: {{ comentario.texto }}</div>
+    </div>
+</div>
+{% endfor %}
+<br><br><br><br><br>
+<form class="form-horizontal" method="post" action="/comentario/{{ cancion._id.toString() }}">
+    <h2>Agregar Comentario</h2>
+    <br><br><br><br><br>
+    <div class="form-group">
+        <label class="control-label col-sm-0" for="texto">Texto:</label>
+        <div>
+            <input type="text" class="form-control" name="texto" required="true" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-0 col-sm-0">
+            <button type="submit" class="btn btn-primary">Agregar</button>
+        </div>
+    </div>
+</form>

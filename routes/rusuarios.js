@@ -17,6 +17,10 @@ module.exports = function(app,swig,gestorBD) {
             }
         });
     });
+    app.get("/registrarse", function(req, res) {
+        let respuesta = swig.renderFile('views/bregistro.html', {});
+        res.send(respuesta);
+    });
     app.get("/identificarse", function(req, res) {
         let respuesta = swig.renderFile('views/bidentificacion.html', {});
         res.send(respuesta);
