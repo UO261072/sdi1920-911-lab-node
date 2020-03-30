@@ -10,9 +10,23 @@
             <h2>{{ cancion.nombre }}</h2>
             <p>{{ cancion.autor }}</p>
             <p>{{ cancion.genero }}</p>
-            <a class="btn btn-primary pull-right"
+            <script>
+                var mensaje = '{{ cancion.comprada}}';
+                if ( !mensaje){
+                    $( ".media-body" )
+                        .append('<a class="btn btn-primary pull-right" id="boton" href="/cancion/comprar/{{cancion._id.toString()}}">{{ cancion.precio}} €</a>');
+                }
+                else{
+                    $( ".media-body" )
+                        .append('<audio controls>\n' +
+                            '\t\t\t\t\t   <source src="/audios/{{ cancion._id.toString() }}.mp3" type="audio/mpeg">\n' +
+                            '\t\t\t\t\t</audio>');
+                }
+            </script>
+            <!--<a class="btn btn-primary pull-right"
+               id="boton"
                href="/cancion/comprar/{{cancion._id.toString()}}">{{ cancion.precio
-                }} €</a>
+                }} €</a>-->
 
             <!-- Cambiar el precio por "reproducir" si ya está comprada -->
         </div>
