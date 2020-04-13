@@ -52,6 +52,7 @@ module.exports = function(app, gestorBD) {
             nombre : req.body.nombre,
             genero : req.body.genero,
             precio : req.body.precio,
+            autor: res.usuario,
         }
         // ¿Validar nombre, genero, precio?
         console.log(cancion.nombre.length);
@@ -114,7 +115,7 @@ module.exports = function(app, gestorBD) {
         }
         let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
         gestorBD.obtenerCanciones(criterio,function (canciones) {
-            console.log("Hola ");
+            console.log("Hola "+res.usuario);
 
 
             if (canciones == null) {
@@ -123,7 +124,7 @@ module.exports = function(app, gestorBD) {
                     error : "La cancion no existe"
                 })
                 return 0;
-            }else if(canciones[0].autor!=req.session.usuario ){
+            }else if(canciones[0].autor!=res.usuario ){
                 res.status(500);
                 res.json({
                     error : "Debes ser el autor de la cancion para modificarla"
@@ -170,7 +171,7 @@ module.exports = function(app, gestorBD) {
                var token = app.get('jwt').sign(
                    {usuario: criterio.email , tiempo: Date.now()/1000},
                    "secreto");
-               u=token;
+               u=criterio.email;
                res.status(200);
                res.json({
                    autentificado:true,
