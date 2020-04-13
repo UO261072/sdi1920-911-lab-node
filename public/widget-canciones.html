@@ -7,7 +7,7 @@
         <thead>
         <tr>
             <th><a onclick="ordenarPorNombre()">Nombre</a></th>
-            <th>Genero</th>
+            <th><a onclick="ordenarPorGenero()">Genero</a></th>
             <th><a onclick="ordenarPorPrecio()">Precio</a></th>
             <th class="col-md-1"></th>
         </tr>
@@ -112,6 +112,14 @@
         canciones.sort(function(a, b) {
             if(a.nombre > b.nombre ) return 1;
             if(a.nombre < b.nombre ) return -1;
+            return 0;
+        });
+        actualizarTabla(canciones);
+    }
+    function ordenarPorGenero(){
+        canciones.sort(function(a, b) {
+            if(a.genero > b.genero ) return 1;
+            if(a.genero < b.genero ) return -1;
             return 0;
         });
         actualizarTabla(canciones);

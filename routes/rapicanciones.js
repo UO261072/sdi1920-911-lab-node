@@ -1,5 +1,7 @@
 module.exports = function(app, gestorBD) {
 
+    var u;
+
     app.get("/api/cancion", function(req, res) {
         gestorBD.obtenerCanciones( {} , function(canciones) {
             if (canciones == null) {
@@ -52,7 +54,21 @@ module.exports = function(app, gestorBD) {
             precio : req.body.precio,
         }
         // ¿Validar nombre, genero, precio?
-
+        console.log(cancion.nombre.length);
+        if(cancion.nombre.length<3||cancion.nombre.length>30){
+            res.status(500);
+            res.json({
+                error : "El nombre debe estar entre 3 y 30 caracteres"
+            })
+            return null;
+        }
+        if(cancion.precio<0){
+            res.status(500);
+            res.json({
+                error : "El precio a de ser positivo"
+            })
+            return null;
+        }
         gestorBD.insertarCancion(cancion, function(id){
             if (id == null) {
                 res.status(500);
@@ -72,15 +88,51 @@ module.exports = function(app, gestorBD) {
 
     app.put("/api/cancion/:id", function(req, res) {
 
-        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+
 
         let cancion = {}; // Solo los atributos a modificar
+        let usuario = req.session.usuario;
         if ( req.body.nombre != null)
             cancion.nombre = req.body.nombre;
         if ( req.body.genero != null)
             cancion.genero = req.body.genero;
         if ( req.body.precio != null)
             cancion.precio = req.body.precio;
+        if(cancion.nombre!=null&&cancion.nombre.length<3||cancion.nombre.length>30){
+            res.status(500);
+            res.json({
+                error : "El nombre debe estar entre 3 y 30 caracteres"
+            })
+            return null;
+        }
+        if(cancion.precio!=null&&cancion.precio<0){
+            res.status(500);
+            res.json({
+                error : "El precio a de ser positivo"
+            })
+            return null;
+        }
+        let criterio = { "_id" : gestorBD.mongo.ObjectID(req.params.id) };
+        gestorBD.obtenerCanciones(criterio,function (canciones) {
+            console.log("Hola ");
+
+
+            if (canciones == null) {
+                res.status(500);
+                res.json({
+                    error : "La cancion no existe"
+                })
+                return 0;
+            }else if(canciones[0].autor!=req.session.usuario){
+                res.status(500);
+                res.json({
+                    error : "Debes ser el autor de la cancion para modificarla"
+                })
+                console.log("Error 2");
+                return 0;
+            }
+        })
+
         gestorBD.modificarCancion(criterio, cancion, function(result) {
             if (result == null) {
                 res.status(500);
@@ -95,6 +147,8 @@ module.exports = function(app, gestorBD) {
                 })
             }
         });
+
+
     });
 
     app.post("/api/autenticar/",function(req,res){
@@ -116,6 +170,7 @@ module.exports = function(app, gestorBD) {
                var token = app.get('jwt').sign(
                    {usuario: criterio.email , tiempo: Date.now()/1000},
                    "secreto");
+               u=token;
                res.status(200);
                res.json({
                    autentificado:true,
