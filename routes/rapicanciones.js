@@ -123,7 +123,7 @@ module.exports = function(app, gestorBD) {
                     error : "La cancion no existe"
                 })
                 return 0;
-            }else if(canciones[0].autor!=req.session.usuario){
+            }else if(canciones[0].autor!=req.session.usuario ){
                 res.status(500);
                 res.json({
                     error : "Debes ser el autor de la cancion para modificarla"
